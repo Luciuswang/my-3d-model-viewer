@@ -71,6 +71,12 @@
         pointLight.position.set(50, 50, 50);
         scene.add(pointLight);
 
+        // 添加一个绿色的立方体，确认场景是否正常显示
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
         // 加载FBX模型
         const loader = new THREE.FBXLoader();
         loader.load('model1.fbx', function (object) {
@@ -86,6 +92,8 @@
 
         function animate() {
             requestAnimationFrame(animate);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
             renderer.render(scene, camera);
         }
         animate();
