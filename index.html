@@ -29,120 +29,105 @@
         }
         nav a {
             margin: 0 15px;
-            color: #F39C12;
             text-decoration: none;
-            font-size: 1.2em;
+            color: #333;
+            font-weight: bold;
         }
-        .content {
+        main {
             padding: 20px;
+        }
+        .section-title {
+            font-size: 2em;
+            color: #F39C12;
+            margin-bottom: 10px;
         }
         .gallery {
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-around;
-        }
-        .gallery div {
-            margin: 10px;
-            border: 2px solid #F39C12;
-            padding: 10px;
-            width: 30%;
+            flex-wrap: wrap;
         }
         .gallery img {
-            width: 100%;
+            max-width: 100%;
             height: auto;
-        }
-        .model-viewer {
-            width: 100%;
-            height: 500px;
-            background-color: #FFFFFF;
-            border: 1px solid #000000; /* Add border for visibility */
+            margin: 10px;
+            border: 2px solid #F39C12;
         }
         footer {
+            background-color: #F0F0F0;
             text-align: center;
             padding: 10px;
-            background-color: #F0F0F0;
+            margin-top: 20px;
         }
-        .contact-info {
-            margin: 20px 0;
+        #3d-viewer {
+            width: 100%;
+            height: 600px;
+            background-color: #000000; /* Set background to black */
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
 </head>
 <body>
     <header>
-        <h1>Lucius Wang</h1>
-        <p>游戏艺术总监</p>
+        <h1>Lucius Wang - 游戏艺术总监</h1>
     </header>
     <nav>
-        <a href="#about">关于我</a>
-        <a href="#2d-art">2D 绘画</a>
-        <a href="#3d-models">3D 模型</a>
-        <a href="#contact">联系方式</a>
+        <a href="#">首页</a>
+        <a href="#">作品展示</a>
+        <a href="#">关于我</a>
+        <a href="#">联系我们</a>
     </nav>
-    <div class="content">
-        <section id="about">
-            <h2>关于我</h2>
-            <p>大家好，我是Lucius Wang，一名充满激情的游戏艺术总监，专注于创造令人惊叹的2D绘画和3D模型作品。我热爱游戏艺术，致力于将骑士、战士和武力的主题通过我的作品表现出来。</p>
-        </section>
-        <section id="2d-art">
-            <h2>2D 绘画作品展示</h2>
+    <main>
+        <section>
+            <h2 class="section-title">2D 绘画作品展示</h2>
             <div class="gallery">
-                <div><img src="2d_art_1.jpg" alt="2D Art 1"></div>
-                <div><img src="2d_art_2.jpg" alt="2D Art 2"></div>
-                <div><img src="2d_art_3.jpg" alt="2D Art 3"></div>
+                <img src="2d_art_1.jpg" alt="2D Art 1">
+                <img src="2d_art_2.jpg" alt="2D Art 2">
+                <img src="2d_art_3.jpg" alt="2D Art 3">
             </div>
         </section>
-        <section id="3d-models">
-            <h2>3D 模型预览</h2>
-            <div id="modelViewer" class="model-viewer"></div>
+        <section>
+            <h2 class="section-title">3D 模型预览</h2>
+            <div id="3d-viewer"></div>
         </section>
-        <section id="contact">
-            <h2>联系方式</h2>
-            <p class="contact-info">Email: <a href="mailto:luxi——007@163.com">luxi——007@163.com</a></p>
-        </section>
-    </div>
+    </main>
     <footer>
+        <p>Email: <a href="mailto:lixi_007@163.com">lixi_007@163.com</a></p>
         <p>&copy; 2024 Lucius Wang. All Rights Reserved.</p>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const container = document.getElementById('modelViewer');
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            container.appendChild(renderer.domElement);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('3d-viewer').appendChild(renderer.domElement);
 
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0x404040, 2); // soft white light
-            scene.add(ambientLight);
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
 
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(0, 100, 100).normalize();
-            scene.add(directionalLight);
-
-            // Load FBX model
-            const loader = new THREE.FBXLoader();
-            loader.load('model1.fbx', function(object) {
-                object.scale.set(0.1, 0.1, 0.1); // Adjust scale if necessary
-                object.position.set(0, -50, 0); // Adjust position if necessary
-                scene.add(object);
-                console.log('FBX model loaded');
-            }, undefined, function(error) {
-                console.error('An error happened during FBX loading:', error);
-            });
-
-            camera.position.set(0, 150, 400);
-
-            function animate() {
-                requestAnimationFrame(animate);
-                renderer.render(scene, camera);
-            }
-
-            animate();
+        // Load FBX model
+        const loader = new THREE.FBXLoader();
+        loader.load('model1.fbx', function (object) {
+            object.scale.set(0.1, 0.1, 0.1);
+            object.position.set(0, -50, 0);
+            scene.add(object);
+            console.log('FBX model loaded');
+        }, undefined, function (error) {
+            console.error('An error happened', error);
         });
+
+        camera.position.set(0, 150, 400);
+
+        const animate = function () {
+            requestAnimationFrame(animate);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        };
+
+        animate();
     </script>
 </body>
 </html>
