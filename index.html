@@ -80,15 +80,15 @@
         // 加载FBX模型
         const loader = new THREE.FBXLoader();
         loader.load('model1.fbx', function (object) {
-            object.scale.set(0.1, 0.1, 0.1); // 缩放模型
-            object.position.set(0, -50, 0); // 位置调整
+            object.scale.set(0.01, 0.01, 0.01);
+            object.position.set(0, -50, 0);
             scene.add(object);
             console.log('FBX model loaded');
         }, undefined, function (error) {
             console.error('An error happened', error);
         });
 
-        camera.position.set(0, 150, 400); // 调整相机位置
+        camera.position.set(0, 150, 400);
 
         function animate() {
             requestAnimationFrame(animate);
@@ -96,6 +96,7 @@
             cube.rotation.y += 0.01;
             renderer.render(scene, camera);
         }
+
         animate();
     </script>
 </body>
