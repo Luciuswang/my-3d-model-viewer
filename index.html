@@ -3,98 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucius Wang - 游戏艺术总监</title>
+    <title>3D Model Viewer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #FFFFFF;
-            color: #000000;
+            background-color: #000000;
             margin: 0;
             padding: 0;
         }
         header {
-            background-color: #F0F0F0;
+            background-color: #ff8c00;
             padding: 20px;
             text-align: center;
         }
-        header h1 {
-            margin: 0;
-            font-size: 2.5em;
-            color: #F39C12;
-        }
-        nav {
+        .content {
             text-align: center;
-            padding: 10px;
-            background-color: #D0D0D0;
-        }
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-        main {
-            padding: 20px;
-        }
-        .section-title {
-            font-size: 2em;
-            color: #F39C12;
-            margin-bottom: 10px;
-        }
-        .gallery {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-        .gallery img {
-            max-width: 100%;
-            height: auto;
-            margin: 10px;
-            border: 2px solid #F39C12;
-        }
-        footer {
-            background-color: #F0F0F0;
-            text-align: center;
-            padding: 10px;
-            margin-top: 20px;
+            margin: 20px;
         }
         #3d-viewer {
             width: 100%;
-            height: 600px;
-            background-color: #FF0000;
+            height: 100vh;
+            display: block;
+        }
+        footer {
+            background-color: #ff8c00;
+            padding: 10px;
+            text-align: center;
+            color: white;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Lucius Wang - 游戏艺术总监</h1>
+        <h1>Lucius Wang - 游戏艺术家</h1>
     </header>
-    <nav>
-        <a href="#">首页</a>
-        <a href="#">作品展示</a>
-        <a href="#">关于我</a>
-        <a href="#">联系我们</a>
-    </nav>
-    <main>
-        <section>
-            <h2 class="section-title">2D 绘画作品展示</h2>
-            <div class="gallery">
-                <img src="2d_art_1.jpg" alt="2D Art 1">
-                <img src="2d_art_2.jpg" alt="2D Art 2">
-                <img src="2d_art_3.jpg" alt="2D Art 3">
-            </div>
-        </section>
-        <section>
-            <h2 class="section-title">3D 模型预览</h2>
-            <div id="3d-viewer"></div>
-        </section>
-    </main>
+    <div class="content">
+        <h2>2D 绘画作品展示</h2>
+        <img src="2d_art_1.jpg" alt="2D Art 1" width="200">
+        <img src="2d_art_2.jpg" alt="2D Art 2" width="200">
+        <img src="2d_art_3.jpg" alt="2D Art 3" width="200">
+    </div>
+    <div class="content">
+        <h2>3D 模型预览</h2>
+        <div id="3d-viewer"></div>
+    </div>
     <footer>
+        <p>联系方式</p>
         <p>Email: <a href="mailto:lixi_007@163.com">lixi_007@163.com</a></p>
         <p>&copy; 2024 Lucius Wang. All Rights Reserved.</p>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/inflate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
     <script>
         const scene = new THREE.Scene();
@@ -104,11 +63,11 @@
         document.getElementById('3d-viewer').appendChild(renderer.domElement);
 
         // 添加环境光
-        const ambientLight = new THREE.AmbientLight(0x404040);
+        const ambientLight = new THREE.AmbientLight(0x404040, 2);
         scene.add(ambientLight);
 
         // 添加点光源
-        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+        const pointLight = new THREE.PointLight(0xffffff, 2, 100);
         pointLight.position.set(50, 50, 50);
         scene.add(pointLight);
 
