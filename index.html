@@ -103,31 +103,32 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('3d-viewer').appendChild(renderer.domElement);
 
-        const geometry = new THREE.BoxGeometry();
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
+        // 添加环境光
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
 
-        // Load FBX model
+        // 添加点光源
+        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+        pointLight.position.set(50, 50, 50);
+        scene.add(pointLight);
+
+        // 加载FBX模型
         const loader = new THREE.FBXLoader();
         loader.load('model1.fbx', function (object) {
-            object.scale.set(0.1, 0.1, 0.1);
-            object.position.set(0, -50, 0);
+            object.scale.set(0.1, 0.1, 0.1); // 缩放模型
+            object.position.set(0, -50, 0); // 位置调整
             scene.add(object);
             console.log('FBX model loaded');
         }, undefined, function (error) {
             console.error('An error happened', error);
         });
 
-        camera.position.set(0, 150, 400);
+        camera.position.set(0, 150, 400); // 调整相机位置
 
-        const animate = function () {
+        function animate() {
             requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
             renderer.render(scene, camera);
-        };
-
+        }
         animate();
     </script>
 </body>
