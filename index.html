@@ -133,15 +133,15 @@
             // Load FBX model
             const loader = new THREE.FBXLoader();
             loader.load('model1.fbx', function(object) {
-                object.scale.set(0.1, 0.1, 0.1); // Adjust scale if necessary
-                object.position.set(0, 0, 0); // Adjust position if necessary
+                object.scale.set(0.05, 0.05, 0.05); // Adjust scale if necessary
+                object.position.set(0, -50, 0); // Adjust position if necessary
                 scene.add(object);
                 console.log('FBX model loaded');
             }, undefined, function(error) {
                 console.error('An error happened during FBX loading:', error);
             });
 
-            camera.position.set(0, 150, 400);
+            camera.position.set(0, 100, 200);
 
             function animate() {
                 requestAnimationFrame(animate);
