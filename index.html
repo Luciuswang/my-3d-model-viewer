@@ -95,9 +95,7 @@
         </section>
         <section id="3d-models">
             <h2>3D 模型预览</h2>
-            <div id="modelViewer1" class="model-viewer"></div>
-            <div id="modelViewer2" class="model-viewer"></div>
-            <div id="modelViewer3" class="model-viewer"></div>
+            <div id="modelViewer" class="model-viewer"></div>
         </section>
         <section id="contact">
             <h2>联系方式</h2>
@@ -142,10 +140,8 @@
             }
         }
 
-        // Initialize model viewers with respective models
-        initModelViewer('modelViewer1', 'model1.fbx');
-        initModelViewer('modelViewer2', 'model2.fbx');
-        initModelViewer('modelViewer3', 'model3.fbx');
+        // Initialize model viewer with one model for testing
+        initModelViewer('modelViewer', 'model1.fbx');
     </script>
 </body>
 </html>
