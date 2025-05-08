@@ -1,90 +1,272 @@
-<!doctype html>
-<html lang="zh-CN">
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<title>Lucius Wang — 作品集</title>
-<style>
-  body{margin:0;background:#111;color:#fff;font-family:Arial,Helvetica,sans-serif;}
-  h1{margin:0;padding:24px 16px;text-align:center;background:#000;font-size:26px;letter-spacing:2px;}
-  section{max-width:1200px;margin:auto;padding:32px 16px;}
-  .gallery{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
-  .gallery img{height:220px;border:2px solid #f39c12;object-fit:cover;}
-  .viewer{width:100%;height:500px;border:1px solid #444;margin-bottom:32px;}
-</style>
 
-<!-- 使用 cdnjs r149：绝对存在 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r149/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r149/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r149/examples/js/loaders/FBXLoader.js"></script>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI TEST</title>
+
+    <style>
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            background-color: #121212;
+
+            color: #FFFFFF;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        header {
+
+            background-image: url('header-bg.jpg');
+
+            background-size: cover;
+
+            background-position: center;
+
+            min-height: 300px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+        header h1 {
+
+            margin: 0;
+
+            font-size: 2.5em;
+
+            color: #F39C12;
+
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+        }
+
+        nav {
+
+            text-align: center;
+
+            padding: 10px;
+
+            background-color: #333333;
+
+        }
+
+        nav a {
+
+            margin: 0 15px;
+
+            color: #F39C12;
+
+            text-decoration: none;
+
+            font-size: 1.2em;
+
+        }
+
+        .content {
+
+            padding: 20px;
+
+        }
+
+        .gallery {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            justify-content: space-around;
+
+        }
+
+        .gallery div {
+
+            margin: 10px;
+
+            border: 2px solid #F39C12;
+
+            padding: 10px;
+
+            width: 30%;
+
+        }
+
+        .gallery img {
+
+            width: 100%;
+
+            height: auto;
+
+        }
+
+        .model-viewer {
+
+            width: 100%;
+
+            height: 500px;
+
+            background-color: #000;
+
+        }
+
+        footer {
+
+            text-align: center;
+
+            padding: 10px;
+
+            background-color: #1F1F1F;
+
+        }
+
+        .contact-info {
+
+            margin: 20px 0;
+
+        }
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+
 </head>
+
 <body>
-<h1>3 D 模型预览</h1>
 
-<section>
-  <h2>2D 绘画作品</h2>
-  <div class="gallery">
-    <img src="2d_art_1.jpg" alt="">
-    <img src="2d_art_2.jpg" alt="">
-    <img src="2d_art_3.jpg" alt="">
-    <img src="2d_art_4.jpg" alt="">
-  </div>
-</section>
+    <header>
 
-<section>
-  <h2>3D 模型</h2>
-  <div id="v1" class="viewer"></div>
-  <div id="v2" class="viewer"></div>
-  <div id="v3" class="viewer"></div>
-</section>
+        <h1>Lucius Wang</h1>
 
-<script>
-function createViewer(domId, fbxFile){
-  const el = document.getElementById(domId);
-  const w  = el.clientWidth, h = el.clientHeight;
+        <p>AI TEST</p>
 
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x222222);
+    </header>
 
-  const cam = new THREE.PerspectiveCamera(60, w/h, 0.1, 1000);
-  cam.position.set(0, 100, 220);
+    <nav>
 
-  const ren = new THREE.WebGLRenderer({antialias:true});
-  ren.setPixelRatio(window.devicePixelRatio);
-  ren.setSize(w, h);
-  el.appendChild(ren.domElement);
+        <a href="#about">关于我</a>
 
-  scene.add(new THREE.AmbientLight(0xffffff,0.6));
-  const dl = new THREE.DirectionalLight(0xffffff,0.8);
-  dl.position.set(60,100,50);
-  scene.add(dl);
+        <a href="#2d-art">2D 绘画</a>
 
-  const ctl = new THREE.OrbitControls(cam, ren.domElement);
-  ctl.enableDamping = true;
+        <a href="#3d-models">3D 模型</a>
 
-  new THREE.FBXLoader().load(
-    fbxFile,
-    obj=>{
-      const box = new THREE.Box3().setFromObject(obj);
-      const size = box.getSize(new THREE.Vector3()).length();
-      obj.scale.setScalar(120/size);
-      scene.add(obj);
-    },
-    undefined,
-    err=>console.error('FBX 加载失败', err)
-  );
+        <a href="#contact">联系方式</a>
 
-  (function loop(){requestAnimationFrame(loop);ctl.update();ren.render(scene,cam);}());
+    </nav>
 
-  window.addEventListener('resize', ()=>{
-    const w2 = el.clientWidth, h2 = el.clientHeight;
-    cam.aspect = w2/h2;
-    cam.updateProjectionMatrix();
-    ren.setSize(w2,h2);
-  });
-}
-createViewer('v1','model1.fbx');
-createViewer('v2','model2.fbx');
-createViewer('v3','model3.fbx');
-</script>
+    <div class="content">
+
+        <section id="about">
+
+            <h2>关于我</h2>
+
+            <p>AI就是快</p>
+
+        </section>
+
+        <section id="2d-art">
+
+            <h2>2D 绘画作品展示</h2>
+
+            <div class="gallery">
+
+                <div><img src="images/2d_art_1.jpg" alt="2D Art 1"></div>
+
+                <div><img src="images/2d_art_2.jpg" alt="2D Art 2"></div>
+
+                <div><img src="images/2d_art_3.jpg" alt="2D Art 3"></div>
+
+                <div><img src="images/2d_art_22.png" alt="2D Art 22"></div>
+
+                <div><img src="images/2d_art_19.jpg" alt="2D Art 19"></div>
+
+            </div>
+
+        </section>
+
+        <section id="3d-models">
+
+            <h2>3D 模型预览</h2>
+
+            <div id="modelViewer1" class="model-viewer"></div>
+
+            <div id="modelViewer2" class="model-viewer"></div>
+
+            <div id="modelViewer3" class="model-viewer"></div>
+
+        </section>
+
+        <section id="contact">
+
+            <h2>联系方式</h2>
+
+            <p class="contact-info">Email:  href="mailto:luxi——007
+
+18:19
+
+@163.com">luxi——007@163.com</a></p>
+
+        </section>
+
+    </div>
+
+    <footer>
+
+        <p>&copy; 2024 Lucius Wang. All Rights Reserved.</p>
+
+    </footer>
+
+    <script>
+
+        function initModelViewer(containerId, modelPath) {
+
+            const container = document.getElementById(containerId);
+
+            const scene = new THREE.Scene();
+
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+
+            const renderer = new THREE.WebGLRenderer();
+
+            renderer.setSize(container.clientWidth, container.clientHeight);
+
+            container.appendChild(renderer.domElement);
+
+
+
+            const light = new THREE.HemisphereLight(0xffffff, 0x444444);
+
+            light.position.set(0, 200, 0);
+
+            scene.add(light);
+
+
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff);
+
+            directionalLight.position.set(0, 200, 100);
+
+            directionalLight.castShadow = true;
 </body>
 </html>
