@@ -1,13 +1,18 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Lucius Wang — 3D 作品集</title>
 <style>
   body{margin:0;background:#111;color:#fff;font-family:Arial,Helvetica,sans-serif;}
   h1{margin:0;padding:24px 16px;text-align:center;background:#000;font-size:24px;}
   .viewer{width:100%;height:500px;border:1px solid #444;margin-bottom:32px;}
 </style>
+
+<!-- ★★★ 全部使用 r149 旧版脚本，绝对 200 OK ★★★ -->
+<script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.149.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://unpkg.com/three@0.149.0/examples/js/loaders/FBXLoader.js"></script>
 </head>
 <body>
 <h1>3 D 模型预览</h1>
@@ -15,70 +20,65 @@
 <div id="v2" class="viewer"></div>
 <div id="v3" class="viewer"></div>
 
-<!-- 唯一一个 module 脚本，内部用 import -->
-<script type="module">
-  /* ---- CDN ES‑Modules ---- */
-  import * as THREE from 'https://unpkg.com/three@0.156.1/build/three.module.js';
-  import { OrbitControls } from 'https://unpkg.com/three@0.156.1/examples/jsm/controls/OrbitControls.js';
-  import { FBXLoader    } from 'https://unpkg.com/three@0.156.1/examples/jsm/loaders/FBXLoader.js';
+<script>
+/* ========== 旧写法，无 ES‑Module，无 import ========== */
+function createViewer(domId, fbxFile){
+  const el = document.getElementById(domId);
+  const w  = el.clientWidth, h = el.clientHeight;
 
-  /* ---- 封装创建函数 ---- */
-  function createViewer(domId, fbxFile){
-    const el = document.getElementById(domId);
-    const w  = el.clientWidth, h = el.clientHeight;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x222222);
 
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x222222);
+  const cam = new THREE.PerspectiveCamera(60, w/h, 0.1, 1000);
+  cam.position.set(0, 100, 220);
 
-    const cam = new THREE.PerspectiveCamera(60, w/h, 0.1, 1000);
-    cam.position.set(0, 100, 220);
+  const ren = new THREE.WebGLRenderer({antialias:true});
+  ren.setPixelRatio(window.devicePixelRatio);
+  ren.setSize(w,h);
+  el.appendChild(ren.domElement);
 
-    const ren = new THREE.WebGLRenderer({antialias:true});
-    ren.setPixelRatio(window.devicePixelRatio);
-    ren.setSize(w,h);
-    el.appendChild(ren.domElement);
+  scene.add(new THREE.AmbientLight(0xffffff,0.6));
+  const dl = new THREE.DirectionalLight(0xffffff,0.8);
+  dl.position.set(60,100,50);
+  scene.add(dl);
 
-    scene.add(new THREE.AmbientLight(0xffffff,0.6));
-    const dl = new THREE.DirectionalLight(0xffffff,0.8);
-    dl.position.set(60,100,50);
-    scene.add(dl);
+  const ctl = new THREE.OrbitControls(cam, ren.domElement);
+  ctl.enableDamping = true;
 
-    const ctl = new OrbitControls(cam, ren.domElement);
-    ctl.enableDamping = true;
+  const loader = new THREE.FBXLoader();
+  loader.load(
+    fbxFile,
+    function (obj){
+      /* 自动缩放：把最长边缩到 120 */
+      const box  = new THREE.Box3().setFromObject(obj);
+      const size = box.getSize(new THREE.Vector3()).length();
+      obj.scale.setScalar(120/size);
+      scene.add(obj);
+    },
+    undefined,
+    function (err){ console.error('加载 FBX 失败:',err); }
+  );
 
-    const loader = new FBXLoader();
-    loader.load(
-      fbxFile,
-      obj=>{
-        const box  = new THREE.Box3().setFromObject(obj);
-        const size = box.getSize(new THREE.Vector3()).length();
-        obj.scale.setScalar(120/size);   // 自动缩放
-        scene.add(obj);
-      },
-      undefined,
-      err=>console.error('加载 FBX 失败:',err)
-    );
-
-    function animate(){
-      requestAnimationFrame(animate);
-      ctl.update();
-      ren.render(scene, cam);
-    }
-    animate();
-
-    /* 视口自适应 */
-    window.addEventListener('resize', ()=>{
-      const w2 = el.clientWidth, h2 = el.clientHeight;
-      cam.aspect = w2/h2;
-      cam.updateProjectionMatrix();
-      ren.setSize(w2,h2);
-    });
+  function animate(){
+    requestAnimationFrame(animate);
+    ctl.update();
+    ren.render(scene, cam);
   }
+  animate();
 
-  /* ---- 初始化三个模型 ---- */
-  createViewer('v1','model1.fbx');
-  createViewer('v2','model2.fbx');
-  createViewer('v3','model3.fbx');
+  /* 浏览器宽度变化同步更新 */
+  window.addEventListener('resize', function(){
+    const w2 = el.clientWidth, h2 = el.clientHeight;
+    cam.aspect = w2/h2;
+    cam.updateProjectionMatrix();
+    ren.setSize(w2,h2);
+  });
+}
+
+/* ---------- 初始化三个模型 ---------- */
+createViewer('v1','model1.fbx');
+createViewer('v2','model2.fbx');
+createViewer('v3','model3.fbx');
 </script>
 </body>
 </html>
