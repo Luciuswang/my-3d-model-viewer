@@ -1,29 +1,26 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>Lucius Wang — 作品集</title>
-  <style>
-    /* ---------- 基础排版 ---------- */
-    body{margin:0;background:#111;color:#fff;font-family:Arial,Helvetica,sans-serif;}
-    h1{margin:0;padding:24px 16px;text-align:center;background:#000;font-size:26px;letter-spacing:2px;}
-    nav{background:#1f1f1f;text-align:center;padding:8px 0;}
-    nav a{color:#f39c12;margin:0 12px;text-decoration:none;font-size:1.1em;}
-    section{max-width:1200px;margin:auto;padding:32px 16px;}
-    /* ---------- 2D 画廊 ---------- */
-    .gallery{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
-    .gallery img{height:220px;object-fit:cover;border:2px solid #f39c12;}
-    /* ---------- 3D 视口 ---------- */
-    .viewer{width:100%;height:500px;border:1px solid #444;margin-bottom:32px;}
-  </style>
+<meta charset="UTF-8" />
+<title>Lucius Wang — 作品集</title>
+<style>
+  body{margin:0;background:#111;color:#fff;font-family:Arial,Helvetica,sans-serif;}
+  h1{margin:0;padding:24px 16px;text-align:center;background:#000;font-size:26px;letter-spacing:2px;}
+  nav{background:#1f1f1f;text-align:center;padding:8px 0;}
+  nav a{color:#f39c12;margin:0 12px;text-decoration:none;font-size:1.1em;}
+  section{max-width:1200px;margin:auto;padding:32px 16px;}
+  .gallery{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
+  .gallery img{height:220px;border:2px solid #f39c12;object-fit:cover;}
+  .viewer{width:100%;height:500px;border:1px solid #444;margin-bottom:32px;}
+</style>
 
-  <!-- Three.js 核心 + 插件（r149，老写法，全局 THREE） -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/loaders/FBXLoader.js"></script>
+<!-- ★★★ GitHub tag r149，examples/js 仍在 ★★★ -->
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r149/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r149/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r149/examples/js/loaders/FBXLoader.js"></script>
 </head>
 <body>
-<h1>3 D &nbsp;模 型 预 览</h1>
+<h1>3 D 模型预览</h1>
 
 <nav>
   <a href="#gallery">2D 作品</a>
@@ -31,7 +28,7 @@
   <a href="#contact">联系</a>
 </nav>
 
-<!-- 2D 画廊 ----------------------------------------------------------- -->
+<!-- 2D 画廊 ------------------------------------------------------- -->
 <section id="gallery">
   <h2>2D 绘画作品</h2>
   <div class="gallery">
@@ -42,7 +39,7 @@
   </div>
 </section>
 
-<!-- 3D 模型 ----------------------------------------------------------- -->
+<!-- 3D 模型 ------------------------------------------------------- -->
 <section id="models">
   <h2>3D 模型预览</h2>
   <div id="v1" class="viewer"></div>
@@ -50,72 +47,64 @@
   <div id="v3" class="viewer"></div>
 </section>
 
-<!-- 联系方式 --------------------------------------------------------- -->
+<!-- 联系方式 ----------------------------------------------------- -->
 <section id="contact">
   <h2>联系方式</h2>
   <p>邮箱：<a href="mailto:luxi——007@163.com" style="color:#f39c12;">luxi——007@163.com</a></p>
 </section>
 
-<!-- 3D 加载脚本 ------------------------------------------------------- -->
+<!-- 3D 初始化脚本 ----------------------------------------------- -->
 <script>
-/* ---------- 通用创建函数（老写法，无模块） ---------- */
 function createViewer(domId, fbxFile){
-  const container = document.getElementById(domId);
-  const w = container.clientWidth, h = container.clientHeight;
+  const el = document.getElementById(domId);
+  const w  = el.clientWidth, h = el.clientHeight;
 
-  // 场景 & 相机
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x222222);
-  const camera = new THREE.PerspectiveCamera(60, w/h, 0.1, 1000);
-  camera.position.set(0, 100, 220);
 
-  // 渲染器
+  const cam = new THREE.PerspectiveCamera(60, w/h, 0.1, 1000);
+  cam.position.set(0, 100, 220);
+
   const renderer = new THREE.WebGLRenderer({antialias:true});
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(w, h);
-  container.appendChild(renderer.domElement);
+  el.appendChild(renderer.domElement);
 
-  // 灯光
   scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-  const dir = new THREE.DirectionalLight(0xffffff, 0.8);
-  dir.position.set(60, 100, 50);
-  scene.add(dir);
+  const dl = new THREE.DirectionalLight(0xffffff, 0.8);
+  dl.position.set(60,100,50);
+  scene.add(dl);
 
-  // 轨道控制
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  const controls = new THREE.OrbitControls(cam, renderer.domElement);
   controls.enableDamping = true;
 
-  // 加载 FBX
   new THREE.FBXLoader().load(
     fbxFile,
-    function (obj){
-      // 自动缩放到合适大小
+    obj=>{
       const box = new THREE.Box3().setFromObject(obj);
       const size = box.getSize(new THREE.Vector3()).length();
-      obj.scale.setScalar(120 / size);
+      obj.scale.setScalar(120/size);
       scene.add(obj);
     },
     undefined,
-    function (err){ console.error('FBX 加载失败：', err); }
+    err=>console.error('FBX 加载失败:', err)
   );
 
-  // 渲染循环
   (function animate(){
     requestAnimationFrame(animate);
     controls.update();
-    renderer.render(scene, camera);
+    renderer.render(scene, cam);
   })();
 
-  // 自适应窗口
-  window.addEventListener('resize', function(){
-    const w2 = container.clientWidth, h2 = container.clientHeight;
-    camera.aspect = w2/h2;
-    camera.updateProjectionMatrix();
+  window.addEventListener('resize', ()=>{
+    const w2 = el.clientWidth, h2 = el.clientHeight;
+    cam.aspect = w2/h2;
+    cam.updateProjectionMatrix();
     renderer.setSize(w2, h2);
   });
 }
 
-/* ---------- 初始化三个模型 ---------- */
+/* 初始化三个模型 */
 createViewer('v1','model1.fbx');
 createViewer('v2','model2.fbx');
 createViewer('v3','model3.fbx');
