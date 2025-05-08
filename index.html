@@ -1,272 +1,105 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
-
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>AI TEST</title>
-
-    <style>
-
-        body {
-
-            font-family: Arial, sans-serif;
-
-            background-color: #121212;
-
-            color: #FFFFFF;
-
-            margin: 0;
-
-            padding: 0;
-
-        }
-
-        header {
-
-            background-image: url('header-bg.jpg');
-
-            background-size: cover;
-
-            background-position: center;
-
-            min-height: 300px;
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            justify-content: center;
-
-        }
-
-        header h1 {
-
-            margin: 0;
-
-            font-size: 2.5em;
-
-            color: #F39C12;
-
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-
-        }
-
-        nav {
-
-            text-align: center;
-
-            padding: 10px;
-
-            background-color: #333333;
-
-        }
-
-        nav a {
-
-            margin: 0 15px;
-
-            color: #F39C12;
-
-            text-decoration: none;
-
-            font-size: 1.2em;
-
-        }
-
-        .content {
-
-            padding: 20px;
-
-        }
-
-        .gallery {
-
-            display: flex;
-
-            flex-wrap: wrap;
-
-            justify-content: space-around;
-
-        }
-
-        .gallery div {
-
-            margin: 10px;
-
-            border: 2px solid #F39C12;
-
-            padding: 10px;
-
-            width: 30%;
-
-        }
-
-        .gallery img {
-
-            width: 100%;
-
-            height: auto;
-
-        }
-
-        .model-viewer {
-
-            width: 100%;
-
-            height: 500px;
-
-            background-color: #000;
-
-        }
-
-        footer {
-
-            text-align: center;
-
-            padding: 10px;
-
-            background-color: #1F1F1F;
-
-        }
-
-        .contact-info {
-
-            margin: 20px 0;
-
-        }
-
-    </style>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
-
+  <meta charset="UTF-8" />
+  <title>Three.js FBX模型多视图</title>
+  <style>
+    /* 固定容器高度500px，宽度100%自适应 */
+    #modelViewer1, #modelViewer2, #modelViewer3 {
+      width: 100%;
+      height: 500px;
+      display: inline-block;  /* 可根据需要调整布局，inline-block可使多个容器横排 */
+      margin: 0;
+      padding: 0;
+    }
+  </style>
 </head>
-
 <body>
+  <!-- 三个模型显示容器 -->
+  <div id="modelViewer1"></div>
+  <div id="modelViewer2"></div>
+  <div id="modelViewer3"></div>
 
-    <header>
+  <!-- 引入Three.js库、控制器和加载器脚本（假设文件位于同目录） -->
+  <script src="three.min.js"></script>
+  <script src="OrbitControls.js"></script>
+  <script src="FBXLoader.js"></script>
 
-        <h1>Lucius Wang</h1>
+  <!-- 主脚本：初始化三个模型场景并加载模型 -->
+  <script>
+    // 创建一个模型查看器，对指定容器加载指定FBX模型
+    function createViewer(containerId, modelFile) {
+      const container = document.getElementById(containerId);
+      const width = container.clientWidth;
+      const height = container.clientHeight;
 
-        <p>AI TEST</p>
+      // 场景与相机
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xeeeeee);  // 背景色浅灰
+      const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+      camera.position.set(0, 100, 200);             // 初始相机位置 (可根据模型大小调整)
+      camera.lookAt(scene.position);                // 相机朝向场景中心 (0,0,0)
 
-    </header>
+      // 基础光源：环境光+方向光
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+      scene.add(hemiLight);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight.position.set(50, 50, 50);
+      scene.add(dirLight);
 
-    <nav>
+      // 渲染器设置
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
 
-        <a href="#about">关于我</a>
+      // 轨道控制器
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.target.set(0, 0, 0);   // 围绕原点旋转（假设模型在原点附近）
+      controls.update();              // 更新一次控制器（摄像机朝向）
 
-        <a href="#2d-art">2D 绘画</a>
+      // 异步加载FBX模型
+      const loader = new THREE.FBXLoader();
+      loader.load(modelFile, function(object) {
+        scene.add(object);
+        // 如果模型尺寸不合适，这里可以调整object的scale或position
+        // 例如：object.scale.set(0.5, 0.5, 0.5);
+      }, undefined, function(error) {
+        console.error("加载模型出现错误:", error);
+      });
 
-        <a href="#3d-models">3D 模型</a>
+      // 渲染动画循环
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();               // 更新OrbitControls（包含阻尼效果）
+        renderer.render(scene, camera);  // 渲染当前场景
+      }
+      animate();  // 启动动画循环
+    }
 
-        <a href="#contact">联系方式</a>
+    // 初始化三个模型视图
+    createViewer('modelViewer1', 'model1.fbx');
+    createViewer('modelViewer2', 'model2.fbx');
+    createViewer('modelViewer3', 'model3.fbx');
 
-    </nav>
-
-    <div class="content">
-
-        <section id="about">
-
-            <h2>关于我</h2>
-
-            <p>AI就是快</p>
-
-        </section>
-
-        <section id="2d-art">
-
-            <h2>2D 绘画作品展示</h2>
-
-            <div class="gallery">
-
-                <div><img src="images/2d_art_1.jpg" alt="2D Art 1"></div>
-
-                <div><img src="images/2d_art_2.jpg" alt="2D Art 2"></div>
-
-                <div><img src="images/2d_art_3.jpg" alt="2D Art 3"></div>
-
-                <div><img src="images/2d_art_22.png" alt="2D Art 22"></div>
-
-                <div><img src="images/2d_art_19.jpg" alt="2D Art 19"></div>
-
-            </div>
-
-        </section>
-
-        <section id="3d-models">
-
-            <h2>3D 模型预览</h2>
-
-            <div id="modelViewer1" class="model-viewer"></div>
-
-            <div id="modelViewer2" class="model-viewer"></div>
-
-            <div id="modelViewer3" class="model-viewer"></div>
-
-        </section>
-
-        <section id="contact">
-
-            <h2>联系方式</h2>
-
-            <p class="contact-info">Email:  href="mailto:luxi——007
-
-18:19
-
-@163.com">luxi——007@163.com</a></p>
-
-        </section>
-
-    </div>
-
-    <footer>
-
-        <p>&copy; 2024 Lucius Wang. All Rights Reserved.</p>
-
-    </footer>
-
-    <script>
-
-        function initModelViewer(containerId, modelPath) {
-
-            const container = document.getElementById(containerId);
-
-            const scene = new THREE.Scene();
-
-            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-
-            const renderer = new THREE.WebGLRenderer();
-
-            renderer.setSize(container.clientWidth, container.clientHeight);
-
-            container.appendChild(renderer.domElement);
-
-
-
-            const light = new THREE.HemisphereLight(0xffffff, 0x444444);
-
-            light.position.set(0, 200, 0);
-
-            scene.add(light);
-
-
-
-            const directionalLight = new THREE.DirectionalLight(0xffffff);
-
-            directionalLight.position.set(0, 200, 100);
-
-            directionalLight.castShadow = true;
+    // （可选）根据窗口大小调整摄像机和渲染器
+    window.addEventListener('resize', function() {
+      // 针对每个Viewer都更新，这里简单处理:
+      const containers = ['modelViewer1','modelViewer2','modelViewer3'];
+      containers.forEach(id => {
+        const container = document.getElementById(id);
+        const canvas = container.querySelector('canvas');
+        if (canvas) {
+          // 获取对应viewer的场景组件（这需要在createViewer中暴露camera和renderer或保存它们）
+          // 简化处理：重新设置canvas大小
+          canvas.width = container.clientWidth;
+          canvas.height = container.clientHeight;
+        }
+      });
+      // 说明：更严格的实现应维护每个viewer的camera和renderer对象，然后在此更新camera.aspect等。
+    });
+  </script>
 </body>
 </html>
